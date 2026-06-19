@@ -30,7 +30,33 @@ async function run() {
       const query = req.body;
       const result = await StartupsCollection.insertOne(query);
       res.send(result)
-    })
+    });
+    app.get('/startups/:email', async (req, res) => {
+      const email = req.params.email;
+
+      const result = await StartupsCollection.findOne({ founder_email: email,});
+
+      res.send(result);
+});
+app.put('/startups/:email', async (req, res) => {
+  const email = req.params.email;
+  const updatedData = req.body;
+
+  const result = await StartupsCollection.updateOne(
+    { founder_email: email },
+    {
+      $set: {
+        startup_name: updatedData.startup_name,
+        industry: updatedData.industry,
+        funding_stage: updatedData.funding_stage,
+        description: updatedData.description,
+        logo: updatedData.logo,
+      },
+    }
+  );
+
+  res.send(result);
+});
 
   } finally {
    
