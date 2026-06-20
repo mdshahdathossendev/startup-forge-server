@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const { ObjectId } = require("mongodb");
 const app = express();
 dotenv.config();
 app.use(express.json());
@@ -19,9 +20,30 @@ async function run() {
   try {
     const db = client.db("Start-Forges");
     const StartupsCollection = db.collection("startups Collection");
+    const OpportunitiesCollection = db.collection("opportunities Collection")
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    app.get('/opportunities', async(req, res)=> {
+      const result = await OpportunitiesCollection.find().toArray();
+      res.send(result)
+    });
+    app.post('/opportunities', async (req, res) => {
+    const opportunity = req.body;
+    const result = await OpportunitiesCollection.insertOne(opportunity);
+    res.send(result);
+    });
+    app.get('/opportunities/:id', async (req, res) => {
+    const id = req.params.id;
+    const result = await OpportunitiesCollection.findOne({_id: new ObjectId(id),});
+    res.send(result);
+    });
+    app.get('/opportunities/mange/:startupId', async (req, res) => {
+     const startupId = req.params.startupId;
+     const result = await OpportunitiesCollection.find({startup_id: startupId}).toArray();
+
+  res.send(result);
+});
     app.get('/startups', async(req, res)=> {
       const result = await StartupsCollection.find().toArray();
       res.send(result)
@@ -37,8 +59,8 @@ async function run() {
       const result = await StartupsCollection.findOne({ founder_email: email,});
 
       res.send(result);
-});
-app.put('/startups/:email', async (req, res) => {
+    });
+   app.put('/startups/:email', async (req, res) => {
   const email = req.params.email;
   const updatedData = req.body;
 
