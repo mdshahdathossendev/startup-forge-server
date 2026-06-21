@@ -22,9 +22,28 @@ async function run() {
     const StartupsCollection = db.collection("startups Collection");
     const OpportunitiesCollection = db.collection("opportunities Collection");
     const ApplicationsCollection = db.collection("applications Collection");
+    const usersCollection = db.collection("user");
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    app.get('/user', async(req, res)=>{
+      const result = await usersCollection.find().toArray();
+      res.send(result)
+    });
+app.put("/user/:id", async (req, res) => {
+  const result = await usersCollection.updateOne(
+    { _id: new ObjectId(req.params.id) },
+    { $set: req.body }
+  );
+
+  res.send(result);
+});
+    app.get("/user/:id", async (req, res) => {
+  const { id } = req.params;
+  const result = await usersCollection.findOne(
+    { _id: new ObjectId(id) });
+    res.send(result);
+});
     app.get('/application', async(req, res)=> {
       const result = await ApplicationsCollection.find().toArray();
       res.send(result)
@@ -38,6 +57,38 @@ async function run() {
     const { opportunity_id } = req.params;
      const result = await ApplicationsCollection.find({opportunity_id: opportunity_id }).toArray();
      res.send(result);
+   });
+   app.get('/application/applicant/:applicant_id', async (req, res) => {
+  const { applicant_id } = req.params;
+
+  const result = await ApplicationsCollection.find({
+    applicant_id: applicant_id
+  }).toArray();
+
+  res.send(result);
+});
+app.get('/application/query/:id', async (req, res) => {
+  const { id } = req.params;
+  const result = await ApplicationsCollection.findOne({
+    _id: new ObjectId(id)
+  });
+
+  res.send(result);
+});
+app.put('/application/query/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  console.log(status)
+  const result = await ApplicationsCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        status: status
+      }
+    }
+  );
+
+  res.send(result);
 });
     app.get('/opportunities', async(req, res)=> {
       const result = await OpportunitiesCollection.find().toArray();
