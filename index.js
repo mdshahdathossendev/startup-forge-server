@@ -207,6 +207,13 @@ app.put('/startups/query/:id', async (req, res) => {
 
       res.send(result);
     });
+    app.delete("/startups/query/:id", async (req, res) => {
+  const result = await StartupsCollection.deleteOne({
+    _id: new ObjectId(req.params.id),
+  });
+
+  res.send(result);
+});
    app.put('/startups/:email', async (req, res) => {
   const email = req.params.email;
   const updatedData = req.body;
