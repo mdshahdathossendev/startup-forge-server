@@ -30,10 +30,14 @@ async function run() {
       const result = await usersCollection.find().toArray();
       res.send(result)
     });
-app.put("/user/:id", async (req, res) => {
-  const result = await usersCollection.updateOne(
-    { _id: new ObjectId(req.params.id) },
-    { $set: req.body }
+app.put('/startups/query/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const result = await StartupsCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: req.body,
+    }
   );
 
   res.send(result);
@@ -43,6 +47,24 @@ app.put("/user/:id", async (req, res) => {
   const result = await usersCollection.findOne(
     { _id: new ObjectId(id) });
     res.send(result);
+});
+
+app.put('/user/:id', async (req, res) => {
+  const { id } = req.params;
+  const updateData = Object.fromEntries(
+    Object.entries(req.body).filter(
+      ([_, value]) => value !== undefined && value !== ""
+    )
+  );
+
+  const result = await usersCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: updateData,
+    }
+  );
+
+  res.send(result);
 });
     app.get('/application', async(req, res)=> {
       const result = await ApplicationsCollection.find().toArray();
@@ -78,7 +100,7 @@ app.get('/application/query/:id', async (req, res) => {
 app.put('/application/query/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  console.log(status)
+  console.log(status , 'hdfjdf')
   const result = await ApplicationsCollection.updateOne(
     { _id: new ObjectId(id) },
     {
@@ -141,6 +163,29 @@ app.delete('/opportunities/:id', async (req, res) => {
       const result = await StartupsCollection.find().toArray();
       res.send(result)
     });
+    app.get('/startups/query/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const result = await StartupsCollection.findOne({
+      _id: new ObjectId(id),
+    });
+    res.send(result);
+});
+app.put('/startups/query/:id', async (req, res) => {
+  const { id } = req.params;
+  const { stats } = req.body;
+ console.log(stats, id, 'test')
+  const result = await StartupsCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        stats: stats
+      }
+    }
+  );
+
+  res.send(result);
+});
     app.delete('/startups/:email', async (req, res) => {
   const email = req.params.email;
 
