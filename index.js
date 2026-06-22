@@ -205,7 +205,7 @@ app.put('/startups/query/:id', async (req, res) => {
 
       const result = await StartupsCollection.findOne({ founder_email: email,});
 
-      res.send(result);
+      res.send(result  || []);
     });
     app.delete("/startups/query/:id", async (req, res) => {
   const result = await StartupsCollection.deleteOne({
