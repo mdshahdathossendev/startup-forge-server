@@ -22,10 +22,20 @@ async function run() {
     const StartupsCollection = db.collection("startups Collection");
     const OpportunitiesCollection = db.collection("opportunities Collection");
     const ApplicationsCollection = db.collection("applications Collection");
+    const paymentsCollection = db.collection("payments Collection");
     const usersCollection = db.collection("user");
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    app.get('/payment', async(req, res)=>{
+      const result = await paymentsCollection.find().toArray();
+      res.send(result)
+    })
+    app.post('/payment', async(req, res)=>{
+      const newPayment = req.body;
+      const result = await paymentsCollection.insertOne(newPayment);
+      res.send(result)
+    })
     app.get('/user', async(req, res)=>{
       const result = await usersCollection.find().toArray();
       res.send(result)
