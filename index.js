@@ -16,8 +16,18 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-async function run() {
+// async function run() {
+//   try {
+const clientPromise = client.connect();
+app.use(async (req, res, next) => {
   try {
+    await clientPromise;
+    next();
+  } catch (error) {
+    console.error("Database connection failed:", error);
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
     const db = client.db("Start-Forges");
     const startupsCollection = db.collection("startups Collection");
     const OpportunitiesCollection = db.collection("opportunities Collection");
@@ -311,12 +321,12 @@ async function run() {
       res.send(result);
     });
 
-  } finally {
+//   } finally {
 
-    // await client.close();
-  }
-}
-run().catch(console.dir);
+//     // await client.close();
+//   }
+// }
+// run().catch(console.dir);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -325,3 +335,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+module.exports=app 
