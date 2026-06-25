@@ -35,9 +35,9 @@ app.use(async (req, res, next) => {
     const paymentsCollection = db.collection("payments Collection");
     const usersCollection = db.collection("user");
     const webSession = db.collection('session')
-    await client.connect();
+    // await client.connect();
     // await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     const verifyStatus = (req, res, next)=> {
       console.log(req.user)
       if(req.user.status == "Block"){
